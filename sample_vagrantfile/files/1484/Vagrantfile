@@ -1,0 +1,19 @@
+unless Vagrant.has_plugin?("vagrant-vbguest")
+  raise 'vagrant-vbguest not installed! Run : "vagrant plugin install vagrant-vbguest"'
+end
+
+Vagrant.configure("2") do |config|
+  # Virtual machine
+  config.vm.box = "debian/jessie64"
+  config.vm.network "public_network"
+
+  # Sync
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+  config.vm.synced_folder "./mount/var/www", "/var/www", create: true
+
+  # Shell provisioner
+  config.vm.provision "shell", path: "provision/001_packages.sh"
+  config.vm.provision "shell", path: "provision/002_configure.sh"
+  config.vm.provision "shell", path: "provision/003_extra.sh"
+  config.vm.provision "shell", path: "provision/010_post_install.sh"
+end

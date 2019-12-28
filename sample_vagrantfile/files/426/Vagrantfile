@@ -1,0 +1,21 @@
+# -*- mode: ruby -*-
+
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+  config.vm.box     = "debian_7.2"
+  config.vm.box_url = "https://dl.dropboxusercontent.com"
+                      "/s/xymcvez85i29lym/vagrant-debian-wheezy64.box"
+
+  config.vm.provider :virtualbox do |vb|
+    vb.customize ["modifyvm", :id, "--ioapic", "on" ]
+    vb.customize ["modifyvm", :id, "--memory", 2048, "--cpus", "2"]
+  end
+
+  Dir.entries("../scripts/").select{|f| f=~/.sh$/}.each do |f|
+    f.insert(0, "../scripts/")
+    config.vm.provision :shell, :path => f
+  end
+
+end

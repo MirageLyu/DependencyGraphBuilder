@@ -1,0 +1,154 @@
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  # Use the same SSH key for each VM.
+  config.ssh.insert_key = false
+  config.vm.box = "centos/7"
+
+  # This message will run when all other completed.
+  config.vm.post_up_message = "Test environment for Ansible servers."
+
+  # Adapter 2: Use private network Host-Only with fixed IP in same subnet.
+  # Netmask 192.168.10.0/24
+  # Host can access them.
+  # They can access each other, host and Internet.
+
+  # This is default folder mapping.
+  # config.vm.synced_folder "./Temp", "/vagrant", owner: "root", group: "root"
+
+  # Global config.
+  # Enable password login.
+  config.vm.provision "shell", inline: <<-END
+    # Testing: sudo sed "/^PasswordAuthentication.*$/d; /^#PasswordAuthentication.*$/a PasswordAuthentication yes" /etc/ssh/sshd_config
+    sudo sed -i "/^PasswordAuthentication.*$/d" /etc/ssh/sshd_config
+    sudo sed -i "/^#PasswordAuthentication.*$/a PasswordAuthentication yes" /etc/ssh/sshd_config
+    sudo systemctl restart sshd
+  END
+
+
+  config.vm.define "ansibleCentOS" do |ansibleCentOS|
+    ansibleCentOS.vm.provider "virtualbox" do |vb|
+      vb.name = "Vagrant_ansibleCentOS"
+      # Default is 1024M.
+      vb.memory = 4096
+      # Default is 1 CPU.
+      vb.cpus = 2
+      vb.gui = true
+    end
+
+    ansibleCentOS.vm.hostname = "centos.djsilenceboy.com"
+    ansibleCentOS.vm.network "private_network", ip: "192.168.10.10"
+  end
+
+
+  config.vm.define "ansibleDbServer" do |ansibleDbServer|
+    ansibleDbServer.vm.provider "virtualbox" do |vb|
+      vb.name = "Vagrant_ansibleDbServer"
+      # Default is 1024M.
+      vb.memory = 3072
+      # Default is 1 CPU.
+      vb.cpus = 2
+    end
+
+    ansibleDbServer.vm.hostname = "db.djsilenceboy.com"
+    ansibleDbServer.vm.network "private_network", ip: "192.168.10.11"
+  end
+
+
+  config.vm.define "ansibleApplicationServer" do |ansibleApplicationServer|
+    ansibleApplicationServer.vm.provider "virtualbox" do |vb|
+      vb.name = "Vagrant_ansibleApplicationServer"
+      # Default is 1024M.
+      vb.memory = 3072
+      # Default is 1 CPU.
+      vb.cpus = 2
+    end
+
+    ansibleApplicationServer.vm.hostname = "appsvr.djsilenceboy.com"
+    ansibleApplicationServer.vm.network "private_network", ip: "192.168.10.12"
+  end
+
+
+  config.vm.define "ansibleJbossServer" do |ansibleJbossServer|
+    ansibleJbossServer.vm.provider "virtualbox" do |vb|
+      vb.name = "Vagrant_ansibleJbossServer"
+      # Default is 1024M.
+      vb.memory = 3072
+      # Default is 1 CPU.
+      vb.cpus = 2
+    end
+
+    ansibleJbossServer.vm.hostname = "jboss.djsilenceboy.com"
+    ansibleJbossServer.vm.network "private_network", ip: "192.168.10.13"
+  end
+
+
+  config.vm.define "ansibleDockerDbServer" do |ansibleDockerDbServer|
+    ansibleDockerDbServer.vm.provider "virtualbox" do |vb|
+      vb.name = "Vagrant_ansibleDockerDbServer"
+      # Default is 1024M.
+      vb.memory = 3072
+      # Default is 1 CPU.
+      vb.cpus = 2
+    end
+
+    ansibleDockerDbServer.vm.hostname = "dockerdb.djsilenceboy.com"
+    ansibleDockerDbServer.vm.network "private_network", ip: "192.168.10.14"
+  end
+
+
+  config.vm.define "ansibleDockerApplicationServer" do |ansibleDockerApplicationServer|
+    ansibleDockerApplicationServer.vm.provider "virtualbox" do |vb|
+      vb.name = "Vagrant_ansibleDockerApplicationServer"
+      # Default is 1024M.
+      vb.memory = 3072
+      # Default is 1 CPU.
+      vb.cpus = 2
+    end
+
+    ansibleDockerApplicationServer.vm.hostname = "dockerappsvr.djsilenceboy.com"
+    ansibleDockerApplicationServer.vm.network "private_network", ip: "192.168.10.15"
+  end
+
+
+  config.vm.define "ansibleDockerServer" do |ansibleDockerServer|
+    ansibleDockerServer.vm.provider "virtualbox" do |vb|
+      vb.name = "Vagrant_ansibleDockerServer"
+      # Default is 1024M.
+      vb.memory = 2048
+      # Default is 1 CPU.
+      vb.cpus = 2
+    end
+
+    ansibleDockerServer.vm.hostname = "docker.djsilenceboy.com"
+    ansibleDockerServer.vm.network "private_network", ip: "192.168.10.16"
+  end
+
+
+  config.vm.define "ansibleDockerServer2" do |ansibleDockerServer2|
+    ansibleDockerServer2.vm.provider "virtualbox" do |vb|
+      vb.name = "Vagrant_ansibleDockerServer2"
+      # Default is 1024M.
+      vb.memory = 2048
+      # Default is 1 CPU.
+      vb.cpus = 2
+    end
+
+    ansibleDockerServer2.vm.hostname = "docker2.djsilenceboy.com"
+    ansibleDockerServer2.vm.network "private_network", ip: "192.168.10.17"
+  end
+
+
+  config.vm.define "ansibleOpenShiftServer" do |ansibleOpenShiftServer|
+    ansibleOpenShiftServer.vm.provider "virtualbox" do |vb|
+      vb.name = "Vagrant_ansibleOpenShiftServer"
+      # Default is 1024M.
+      vb.memory = 4096
+      # Default is 1 CPU.
+      vb.cpus = 2
+    end
+
+    ansibleOpenShiftServer.vm.hostname = "openshift.djsilenceboy.com"
+    ansibleOpenShiftServer.vm.network "private_network", ip: "192.168.10.18"
+  end
+end

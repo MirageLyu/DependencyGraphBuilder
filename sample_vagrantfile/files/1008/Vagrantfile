@@ -1,0 +1,63 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+  config.vm.define 'cadvisor-collectd_example' do |node|
+    node.vm.box = "maier/centos-7.1.1503-x86_64"
+    node.vm.network 'private_network', type: 'dhcp'
+    node.vm.synced_folder '.', '/vagrant', disabled: true
+
+    #
+    # for influxdb quick start
+    #
+    # <http://localhost:48083/>
+    node.vm.network 'forwarded_port', guest: 8083, host: 8083
+    node.vm.network 'forwarded_port', guest: 8086, host: 8086
+
+    #
+    # for graphite quick start
+    #
+    # <http://localhost:40080/>
+    node.vm.network 'forwarded_port', guest: 8081, host: 8081
+
+    #
+    # for cadvisor
+    #
+    # <http://localhost:48080/>
+    node.vm.network 'forwarded_port', guest: 8080, host: 8080
+
+    node.vm.provider "virtualbox" do |vb|
+      vb.name = 'cadvisor-collectd_example'
+      vb.cpus = 2
+      vb.memory = 2048
+    end
+
+    node.vm.provision "shell", privileged: true, inline: <<-SHELL
+    yum -y update
+    yum -y install svn
+    # install docker v1.6
+    echo -e "[virt7-testing]\nname=virt7-testing\nbaseurl=http://cbs.centos.org/repos/virt7-testing/x86_64/os/\nenabled=0\ngpgcheck=0" > /etc/yum.repos.d/virt7-testing.repo
+    yum -y --disablerepo="*" --enablerepo="virt7-testing" install docker
+    getent group docker &>/dev/null || groupadd docker
+    groups vagrant | grep &>/dev/null '\bdocker\b' || usermod -aG docker vagrant &>/dev/null
+    if [ $(grep -c '^Group=docker' /usr/lib/systemd/system/docker.service) -ne 1 ]; then
+      sed -i '/^\[Service\]/aGroup=docker' /usr/lib/systemd/system/docker.service
+      systemctl enable docker.service
+      systemctl start docker.service
+      systemctl status docker.service
+    fi
+    docker pull google/cadvisor:latest
+    docker pull maier/cadvisor-collectd:latest
+    docker pull nickstenning/graphite:latest
+    docker pull tutum/influxdb:latest
+    cd /home/vagrant
+    svn export --force https://github.com/maier/cadvisor-collectd/trunk/examples
+    cd examples
+    [ -d csv ] || mkdir csv
+    chmod 700 quickstart
+    svn export --force https://github.com/maier/cadvisor-collectd/trunk/etc-collectd
+    cd /home/vagrant
+    chown -R vagrant:vagrant examples
+    SHELL
+  end
+end

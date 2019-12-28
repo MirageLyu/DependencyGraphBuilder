@@ -1,0 +1,21 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+	config.vm.box = "debian/jessie64"
+
+	config.vm.synced_folder "../", "/jepsen"
+
+	# machine for running hamlet tests
+	config.vm.define :hamlet do |mxconsole|
+		mxconsole.vm.hostname = "hamlet"
+	
+		mxconsole.vm.provision :shell, :path => "setup.sh"
+		mxconsole.vm.provision :shell, :path => "keys.sh"
+		mxconsole.vm.provision :shell, :path => "net.sh"
+		mxconsole.vm.provision :shell, :path => "lxc.sh"
+	end
+end

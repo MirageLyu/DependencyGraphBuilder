@@ -1,0 +1,4 @@
+pydrive
+retrying
+appdirs
+progressbar2

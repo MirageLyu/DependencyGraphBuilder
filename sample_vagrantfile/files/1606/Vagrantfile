@@ -1,0 +1,31 @@
+Vagrant.configure(2) do |config|
+  config.vm.box = "ubuntu/xenial64"
+  config.vm.provider "virtualbox" do |vb|
+    #vb.gui = true
+
+    # Name in VirtualBox Gui
+    vb.name = "bw-test-vagrant"
+
+    # Number of CPUs
+    vb.cpus = 4
+    
+    # Memory                                                                    
+    vb.memory = 8192 
+  end
+  config.vm.provision "shell", inline: <<-SHELL
+    DEBIAN_FRONTEND=noninteractive apt-get update --quiet
+    DEBIAN_FRONTEND=noninteractive apt-get upgrade --quiet --yes
+    DEBIAN_FRONTEND=noninteractive apt-get install --quiet --yes --no-install-recommends \
+    file \
+    sudo
+    DEBIAN_FRONTEND=noninteractive apt-get autoremove --yes 
+    DEBIAN_FRONTEND=noninteractive apt-get clean
+  SHELL
+  config.vm.provision "shell" do |s|
+    ssh_pub_key = File.readlines("#{Dir.home}/.ssh/id_rsa.pub").first.strip
+    s.inline = <<-SHELL
+      echo #{ssh_pub_key} >> /home/ubuntu/.ssh/authorized_keys
+      echo #{ssh_pub_key} >> /root/.ssh/authorized_keys
+    SHELL
+  end
+ end
