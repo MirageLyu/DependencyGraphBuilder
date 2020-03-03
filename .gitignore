@@ -3,6 +3,6 @@ sample_requirements/files/
 sample_vagrantfile/files/
 
 __pycache__/
-out.log[^5]*
-reqout.log[^5]*
+out.log[0-9]*
+reqout.log[0-9]*
 *.log
