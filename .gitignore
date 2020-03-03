@@ -5,3 +5,4 @@ sample_vagrantfile/files/
 __pycache__/
 out.log[^5]*
 reqout.log[^5]*
+*.log
