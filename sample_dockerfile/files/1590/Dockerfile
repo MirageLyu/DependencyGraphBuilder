@@ -1,5 +1,0 @@
-FROM postgres:alpine
-
-ENV POSTGRES_PASSWORD test
-
-EXPOSE 5432

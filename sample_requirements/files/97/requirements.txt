@@ -1,3 +1,0 @@
-yapsy
-pymysql
-paramiko

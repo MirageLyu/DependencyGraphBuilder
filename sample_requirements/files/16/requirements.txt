@@ -1,5 +1,0 @@
-# Run with the command:
-# pip install -r doc/requirements.txt
-wheel
-openpyxl
-torcms==0.7.2

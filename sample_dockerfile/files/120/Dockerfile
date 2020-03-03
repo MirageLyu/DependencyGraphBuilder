@@ -1,4 +1,0 @@
-FROM postgres:9.6
-MAINTAINER Thomas Darr <me@thomasd.se> (https://thomasd.se/)
-
-COPY ["schema.sql", "/docker-entrypoint-initdb.d"]

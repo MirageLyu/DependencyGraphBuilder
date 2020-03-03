@@ -1,1 +1,0 @@
-.reaction/docker/reaction.prod.dockerfile

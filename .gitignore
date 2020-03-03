@@ -1,0 +1,7 @@
+sample_dockerfile/files/
+sample_requirements/files/
+sample_vagrantfile/files/
+
+__pycache__/
+out.log[^5]*
+reqout.log[^5]*

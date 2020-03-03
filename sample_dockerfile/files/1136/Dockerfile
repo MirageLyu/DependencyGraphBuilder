@@ -1,4 +1,0 @@
-FROM golang:onbuild
-
-ENV USERNAME "MrHaas"
-ENV CORRECTION "0"
